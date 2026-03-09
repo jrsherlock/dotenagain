@@ -15,65 +15,49 @@
             "src": "icons/icon-72.png",
             "sizes": "72x72",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-96.png",
             "sizes": "96x96",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-128.png",
             "sizes": "128x128",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-144.png",
             "sizes": "144x144",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-152.png",
             "sizes": "152x152",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-384.png",
             "sizes": "384x384",
             "type": "image/png",
-            "purpose": "maskable any"
+            "purpose": "any"
         },
         {
             "src": "icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "maskable any"
-        }
-    ],
-    "screenshots": [
-        {
-            "src": "screenshots/home.png",
-            "sizes": "390x844",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Home Screen"
-        },
-        {
-            "src": "screenshots/schedule.png",
-            "sizes": "390x844",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Conference Schedule"
+            "purpose": "any"
         }
     ],
     "shortcuts": [
@@ -81,25 +65,13 @@
             "name": "My Schedule",
             "short_name": "Schedule",
             "description": "View your personal conference schedule",
-            "url": "/?view=my-schedule",
-            "icons": [
-                {
-                    "src": "icons/shortcut-schedule.png",
-                    "sizes": "96x96"
-                }
-            ]
+            "url": "/?view=my-schedule"
         },
         {
             "name": "Full Schedule",
             "short_name": "Events",
             "description": "Browse all conference events",
-            "url": "/?view=events",
-            "icons": [
-                {
-                    "src": "icons/shortcut-events.png",
-                    "sizes": "96x96"
-                }
-            ]
+            "url": "/?view=events"
         }
     ],
     "related_applications": [],

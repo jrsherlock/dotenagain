@@ -2,599 +2,265 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a2f1a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="IAYPAA X">
-    <meta name="description" content="IAYPAA X - From Muck to Miracle - Iowa City, IA 2026">
-    
-    <title>IAYPAA X - From Muck to Miracle</title>
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-    
-    <!-- Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAYPAA X — From Muck to Miracle</title>
+    <meta name="description" content="10th Annual Iowa Young People in AA Conference - Iowa City, IA 2026">
+    <meta name="theme-color" content="#0a0f0a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: #0a0f0a;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            color: #f5f5f0;
+            background: radial-gradient(ellipse at 50% 60%, #121f12 0%, #0a0f0a 60%, #050805 100%);
+        }
+
+        /* ── Fog particles ── */
+        .fog-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .fog {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(45, 74, 45, 0.18) 0%, transparent 70%);
+            filter: blur(40px);
+            opacity: 0;
+            animation: fogDrift linear infinite;
+        }
+
+        .fog:nth-child(1) { width: 500px; height: 350px; top: 10%; left: -15%; animation-duration: 18s; animation-delay: 0s; }
+        .fog:nth-child(2) { width: 400px; height: 280px; top: 55%; left: -10%; animation-duration: 22s; animation-delay: 2s; }
+        .fog:nth-child(3) { width: 600px; height: 400px; top: 30%; left: -20%; animation-duration: 25s; animation-delay: 5s; }
+        .fog:nth-child(4) { width: 350px; height: 250px; top: 70%; left: -10%; animation-duration: 20s; animation-delay: 8s; }
+        .fog:nth-child(5) { width: 450px; height: 300px; top: 5%;  left: -15%; animation-duration: 24s; animation-delay: 3s; }
+        .fog:nth-child(6) { width: 550px; height: 380px; top: 45%; left: -18%; animation-duration: 28s; animation-delay: 6s; }
+        .fog:nth-child(7) { width: 320px; height: 220px; top: 80%; left: -8%;  animation-duration: 19s; animation-delay: 10s; }
+
+        @keyframes fogDrift {
+            0%   { transform: translateX(0); opacity: 0; }
+            10%  { opacity: 0.6; }
+            50%  { opacity: 0.8; }
+            90%  { opacity: 0.5; }
+            100% { transform: translateX(calc(100vw + 200px)); opacity: 0; }
+        }
+
+        /* ── Drip accents ── */
+        .drip {
+            position: fixed;
+            top: -10px;
+            width: 3px;
+            border-radius: 0 0 50% 50%;
+            background: linear-gradient(to bottom, rgba(45, 74, 45, 0.6), rgba(124, 179, 66, 0.2), transparent);
+            z-index: 2;
+            opacity: 0;
+        }
+
+        .drip:nth-child(1) { left: 15%; height: 80px; animation: drip 4s 2s ease-in infinite; }
+        .drip:nth-child(2) { left: 78%; height: 60px; animation: drip 5s 4.5s ease-in infinite; }
+        .drip:nth-child(3) { left: 42%; height: 50px; animation: drip 6s 7s ease-in infinite; }
+
+        @keyframes drip {
+            0%   { transform: translateY(-100%) scaleY(0.3); opacity: 0; }
+            20%  { transform: translateY(0) scaleY(1); opacity: 0.7; }
+            60%  { opacity: 0.5; }
+            100% { transform: translateY(120vh) scaleY(1.5); opacity: 0; }
+        }
+
+        /* ── Stage ── */
+        .stage {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        /* ── Glow ring behind logo ── */
+        .logo-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glow-ring {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124, 179, 66, 0.15) 0%, rgba(201, 162, 39, 0.08) 40%, transparent 70%);
+            filter: blur(30px);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: none;
+        }
+
+        /* ── Logo ── */
+        .logo {
+            display: block;
+            width: min(80vw, 420px);
+            height: auto;
+            opacity: 0;
+            filter: blur(15px) saturate(0.3);
+            transform: scale(1.12);
+            transition: none;
+        }
+
+        /* ── Tagline ── */
+        .tagline {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(24px);
+            transition: none;
+        }
+
+        .tagline-main {
+            font-family: 'Creepster', cursive;
+            font-size: clamp(1.1rem, 4.5vw, 1.8rem);
+            color: #c9a227;
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 20px rgba(201, 162, 39, 0.4), 0 0 60px rgba(201, 162, 39, 0.15);
+            line-height: 1.4;
+        }
+
+        .tagline-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            color: #8a9a8a;
+            margin-top: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* ── Loaded state — triggers the whole sequence ── */
+
+        /* Logo emerges: 1s delay, 2.5s duration */
+        .loaded .logo {
+            transition: opacity 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) 1s,
+                        filter 3s cubic-bezier(0.25, 0.1, 0.25, 1) 1s,
+                        transform 3s cubic-bezier(0.16, 1, 0.3, 1) 1s;
+            opacity: 1;
+            filter: blur(0) saturate(1);
+            transform: scale(1);
+        }
+
+        /* Glow swells in behind logo: 1.5s delay */
+        .loaded .glow-ring {
+            transition: opacity 3s ease 1.5s, transform 3.5s ease 1.5s;
+            opacity: 1;
+            transform: scale(1);
+            animation: glowPulse 4s ease-in-out 4.5s infinite;
+        }
+
+        /* Text appears after logo settles: 4.5s delay */
+        .loaded .tagline {
+            transition: opacity 1.8s ease 4.5s, transform 1.8s cubic-bezier(0.16, 1, 0.3, 1) 4.5s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50%      { opacity: 1;   transform: scale(1.06); }
+        }
+
+        /* ── Vignette overlay ── */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(5, 8, 5, 0.7) 100%);
+        }
+
+        /* ── Swamp floor ambient glow ── */
+        .floor-glow {
+            position: fixed;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            height: 200px;
+            z-index: 3;
+            background: radial-gradient(ellipse at 50% 100%, rgba(45, 74, 45, 0.12) 0%, transparent 70%);
+            filter: blur(20px);
+            animation: floorPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes floorPulse {
+            0%, 100% { opacity: 0.5; }
+            50%      { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Splash Screen -->
-    <div id="splash-screen" class="splash-screen">
-        <div class="splash-content">
-            <img src="images/ooze2-mobile.png" alt="IAYPAA X Logo" class="splash-logo">
-            <div class="splash-loader">
-                <div class="ooze-drip"></div>
-                <div class="ooze-drip"></div>
-                <div class="ooze-drip"></div>
-            </div>
+    <!-- Fog particles -->
+    <div class="fog-container">
+        <div class="fog"></div>
+        <div class="fog"></div>
+        <div class="fog"></div>
+        <div class="fog"></div>
+        <div class="fog"></div>
+        <div class="fog"></div>
+        <div class="fog"></div>
+    </div>
+
+    <!-- Drip accents -->
+    <div class="drip"></div>
+    <div class="drip"></div>
+    <div class="drip"></div>
+
+    <!-- Swamp floor glow -->
+    <div class="floor-glow"></div>
+
+    <!-- Vignette -->
+    <div class="vignette"></div>
+
+    <!-- Main content -->
+    <div class="stage">
+        <div class="logo-wrap">
+            <div class="glow-ring"></div>
+            <picture>
+                <source srcset="images/ooze2-mobile.webp" type="image/webp">
+                <img src="images/ooze2-mobile.png"
+                     alt="IAYPAA X — From Muck to Miracle"
+                     class="logo"
+                     width="720" height="453">
+            </picture>
+        </div>
+        <div class="tagline">
+            <div class="tagline-main">Official Conference Mobile App<br>Coming Soon</div>
+            <div class="tagline-sub">Iowa City, Iowa &bull; August 2026</div>
         </div>
     </div>
 
-    <!-- Main App Container -->
-    <div id="app" class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <h1 class="header-title">IAYPAA X</h1>
-                <button id="search-btn" class="header-btn" aria-label="Search">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                    </svg>
-                </button>
-            </div>
-        </header>
-
-        <!-- Search Modal -->
-        <div id="search-modal" class="modal hidden">
-            <div class="modal-content search-modal-content">
-                <div class="search-header">
-                    <input type="text" id="search-input" placeholder="Search events, speakers..." autocomplete="off">
-                    <button id="close-search" class="close-btn">&times;</button>
-                </div>
-                <div id="search-results" class="search-results"></div>
-            </div>
-        </div>
-
-        <!-- Main Content Area -->
-        <main id="main-content" class="main-content">
-            <!-- Home View -->
-            <section id="home-view" class="view active">
-                <div class="hero-section">
-                    <img src="images/ooze2-mobile.png" alt="IAYPAA X - From Muck to Miracle" class="hero-logo">
-                    <div class="hero-info">
-                        <h2 class="hero-title">10th Annual Conference</h2>
-                        <p class="hero-tagline">From Muck to Miracle</p>
-                        <div class="hero-details">
-                            <div class="detail-item">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                                <span>October 2026</span>
-                            </div>
-                            <div class="detail-item">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                <span>Iowa City, Iowa</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-links">
-                    <button class="quick-link-card" data-view="events">
-                        <div class="card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </div>
-                        <span>Full Schedule</span>
-                    </button>
-                    <button class="quick-link-card" data-view="my-schedule">
-                        <div class="card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                            </svg>
-                        </div>
-                        <span>My Schedule</span>
-                    </button>
-                    <button class="quick-link-card" data-view="info">
-                        <div class="card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                        </div>
-                        <span>Info</span>
-                    </button>
-                    <button class="quick-link-card" data-view="map">
-                        <div class="card-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-                                <line x1="8" y1="2" x2="8" y2="18"></line>
-                                <line x1="16" y1="6" x2="16" y2="22"></line>
-                            </svg>
-                        </div>
-                        <span>Venue Map</span>
-                    </button>
-                </div>
-
-                <div class="whats-happening">
-                    <h3 class="section-title">What's Happening Now</h3>
-                    <div id="current-events" class="current-events-list">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-
-                <div class="about-section">
-                    <h3 class="section-title">What's IAYPAA?</h3>
-                    <div class="about-content">
-                        <p>Iowa Young People In Alcoholics Anonymous provides an opportunity for A.A. members from all over the state to come together and share their experience, strength, and hope.</p>
-                        <p>It is a function of A.A. members in accordance with GSO guidelines for 'Conference and Conventions' that allows for heavy participation in service aspects of the conference by newer and/or younger Iowa members, providing exposure to the 12 Traditions, 12 Concepts for World Service, service committees, and a convention of A.A. members—all vital components of the attraction that keep people coming back.</p>
-                        <p>IAYPAA conference was first held in Des Moines, Iowa in 2016. It continues to move to different cities across the state. At each conference, bids are accepted from cities wishing to host the next IAYPAA conference.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Events View -->
-            <section id="events-view" class="view">
-                <div class="view-header">
-                    <h2>Conference Schedule</h2>
-                    <p class="view-subtitle">Tap events to add to your schedule</p>
-                </div>
-                
-                <div class="day-tabs">
-                    <button class="day-tab active" data-day="friday">Friday</button>
-                    <button class="day-tab" data-day="saturday">Saturday</button>
-                    <button class="day-tab" data-day="sunday">Sunday</button>
-                </div>
-
-                <div class="events-filter">
-                    <select id="venue-filter" class="filter-select">
-                        <option value="all">All Venues</option>
-                        <option value="grand-ballroom">Grand Ballroom</option>
-                        <option value="board-room">Board Room</option>
-                        <option value="hideout">The Hideout</option>
-                        <option value="loft">The Loft</option>
-                        <option value="outside">Outside</option>
-                    </select>
-                    <select id="type-filter" class="filter-select">
-                        <option value="all">All Types</option>
-                        <option value="speaker">Speakers</option>
-                        <option value="panel">Panels</option>
-                        <option value="meeting">Meetings</option>
-                        <option value="social">Social Events</option>
-                        <option value="registration">Registration</option>
-                    </select>
-                </div>
-
-                <div id="events-list" class="events-list">
-                    <!-- Populated by JS -->
-                </div>
-            </section>
-
-            <!-- My Schedule View -->
-            <section id="my-schedule-view" class="view">
-                <div class="view-header">
-                    <h2>My Schedule</h2>
-                    <p class="view-subtitle">Drag to reorder • Swipe to remove</p>
-                </div>
-
-                <div class="my-schedule-tabs">
-                    <button class="day-tab active" data-day="friday">Friday</button>
-                    <button class="day-tab" data-day="saturday">Saturday</button>
-                    <button class="day-tab" data-day="sunday">Sunday</button>
-                </div>
-
-                <div id="my-schedule-list" class="my-schedule-list">
-                    <!-- Populated by JS -->
-                </div>
-
-                <div id="empty-schedule" class="empty-state hidden">
-                    <div class="empty-icon">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                    </div>
-                    <h3>No Events Yet</h3>
-                    <p>Browse the schedule and tap events to add them here!</p>
-                    <button class="btn-primary" data-view="events">Browse Events</button>
-                </div>
-            </section>
-
-            <!-- Info View -->
-            <section id="info-view" class="view">
-                <div class="view-header">
-                    <h2>Conference Info</h2>
-                </div>
-
-                <div class="info-cards">
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                            <h3>Venue</h3>
-                        </div>
-                        <div class="info-card-content">
-                            <p class="venue-name">Iowa Memorial Union</p>
-                            <p class="venue-address">125 N Madison St<br>Iowa City, IA 52242</p>
-                            <a href="https://maps.google.com/?q=Iowa+Memorial+Union+Iowa+City" target="_blank" class="btn-outline">Get Directions</a>
-                        </div>
-                    </div>
-
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <h3>Registration</h3>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="registration-times">
-                                <div class="reg-day">
-                                    <strong>Friday</strong>
-                                    <span>3:00 PM - 6:00 PM</span>
-                                    <span>9:00 PM - 10:00 PM</span>
-                                </div>
-                                <div class="reg-day">
-                                    <strong>Saturday</strong>
-                                    <span>8:00 AM - 6:00 PM</span>
-                                    <span>9:00 PM - 10:00 PM</span>
-                                </div>
-                                <div class="reg-day">
-                                    <strong>Sunday</strong>
-                                    <span>8:00 AM - 9:00 AM</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                                <line x1="6" y1="1" x2="6" y2="4"></line>
-                                <line x1="10" y1="1" x2="10" y2="4"></line>
-                                <line x1="14" y1="1" x2="14" y2="4"></line>
-                            </svg>
-                            <h3>Hospitality Suite</h3>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="hospitality-times">
-                                <div class="hosp-day">
-                                    <strong>Friday</strong>
-                                    <span>3:00 PM - 6:00 PM</span>
-                                    <span>10:00 PM - Midnight</span>
-                                </div>
-                                <div class="hosp-day">
-                                    <strong>Saturday</strong>
-                                    <span>12:00 AM - 2:00 AM</span>
-                                    <span>7:00 AM - 6:00 PM</span>
-                                    <span>10:00 PM - Midnight</span>
-                                </div>
-                                <div class="hosp-day">
-                                    <strong>Sunday</strong>
-                                    <span>Midnight - 2:00 AM</span>
-                                    <span>7:00 AM - 9:00 AM</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            <h3>Key Times</h3>
-                        </div>
-                        <div class="info-card-content">
-                            <div class="key-times">
-                                <div class="key-time">
-                                    <span class="time">Friday 8:00 PM</span>
-                                    <span class="event">Main Speaker</span>
-                                </div>
-                                <div class="key-time">
-                                    <span class="time">Saturday 7:00 PM</span>
-                                    <span class="event">Sobriety Countdown</span>
-                                </div>
-                                <div class="key-time">
-                                    <span class="time">Saturday 8:00 PM</span>
-                                    <span class="event">Main Speaker</span>
-                                </div>
-                                <div class="key-time">
-                                    <span class="time">Saturday 10:00 PM</span>
-                                    <span class="event">Dance Party</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-card full-width">
-                        <div class="info-card-header">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                <polyline points="22,6 12,13 2,6"></polyline>
-                            </svg>
-                            <h3>Contact</h3>
-                        </div>
-                        <div class="info-card-content">
-                            <p>Questions? Reach out to the Host Committee!</p>
-                            <a href="https://iaypaa.org" target="_blank" class="btn-outline">Visit iaypaa.org</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Map View -->
-            <section id="map-view" class="view">
-                <div class="view-header">
-                    <h2>Venue Map</h2>
-                </div>
-                
-                <div class="venue-rooms">
-                    <div class="room-card">
-                        <div class="room-color grand-ballroom"></div>
-                        <div class="room-info">
-                            <h4>Grand Ballroom</h4>
-                            <p>Main speakers, Hype, Roll Call, Sobriety Countdown</p>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-color board-room"></div>
-                        <div class="room-info">
-                            <h4>Board Room</h4>
-                            <p>Panels, Workshops, Meditation</p>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-color hideout"></div>
-                        <div class="room-info">
-                            <h4>The Hideout</h4>
-                            <p>Smaller panels, Intimate discussions</p>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-color loft"></div>
-                        <div class="room-info">
-                            <h4>The Loft</h4>
-                            <p>Bid Skits, Special events</p>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-color outside"></div>
-                        <div class="room-info">
-                            <h4>Outside</h4>
-                            <p>Field Day, Outdoor meetings</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="map-placeholder">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-                        <line x1="8" y1="2" x2="8" y2="18"></line>
-                        <line x1="16" y1="6" x2="16" y2="22"></line>
-                    </svg>
-                    <p>Detailed venue map coming soon!</p>
-                </div>
-            </section>
-
-            <!-- Speakers View -->
-            <section id="speakers-view" class="view">
-                <div class="view-header">
-                    <h2>Speaker Corner</h2>
-                    <p class="view-subtitle">Meet our featured speakers</p>
-                </div>
-
-                <div class="speakers-grid">
-                    <div class="speaker-card">
-                        <div class="speaker-photo-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div class="speaker-info">
-                            <h3 class="speaker-name">Friday Night Speaker</h3>
-                            <p class="speaker-bio">Speaker to be announced. Check back closer to the conference for details!</p>
-                        </div>
-                    </div>
-
-                    <div class="speaker-card">
-                        <div class="speaker-photo-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div class="speaker-info">
-                            <h3 class="speaker-name">Saturday Noon Speaker</h3>
-                            <p class="speaker-bio">Speaker to be announced. Check back closer to the conference for details!</p>
-                        </div>
-                    </div>
-
-                    <div class="speaker-card">
-                        <div class="speaker-photo-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div class="speaker-info">
-                            <h3 class="speaker-name">Saturday Night Speaker</h3>
-                            <p class="speaker-bio">Speaker to be announced. Check back closer to the conference for details!</p>
-                        </div>
-                    </div>
-
-                    <div class="speaker-card">
-                        <div class="speaker-photo-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <div class="speaker-info">
-                            <h3 class="speaker-name">Sunday Spiritual Speaker</h3>
-                            <p class="speaker-bio">Speaker to be announced. Check back closer to the conference for details!</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <button class="nav-item active" data-view="home">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                <span>Home</span>
-            </button>
-            <button class="nav-item" data-view="events">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>Events</span>
-            </button>
-            <button class="nav-item" data-view="my-schedule">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                <span>My Schedule</span>
-            </button>
-            <button class="nav-item" data-view="info">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <span>Info</span>
-            </button>
-            <button class="nav-item" data-view="more">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-                <span>More</span>
-            </button>
-        </nav>
-
-        <!-- More Menu Drawer -->
-        <div id="more-drawer" class="drawer hidden">
-            <div class="drawer-overlay"></div>
-            <div class="drawer-content">
-                <div class="drawer-header">
-                    <h3>More</h3>
-                    <button class="close-drawer">&times;</button>
-                </div>
-                <div class="drawer-menu">
-                    <button class="drawer-item" data-view="map">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-                        </svg>
-                        <span>Venue Map</span>
-                    </button>
-                    <button class="drawer-item" data-view="speakers">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        <span>Speaker Corner</span>
-                    </button>
-                    <button class="drawer-item" id="install-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span>Add to Home Screen</span>
-                    </button>
-                    <button class="drawer-item" id="share-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="18" cy="5" r="3"></circle>
-                            <circle cx="6" cy="12" r="3"></circle>
-                            <circle cx="18" cy="19" r="3"></circle>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                        </svg>
-                        <span>Share App</span>
-                    </button>
-                    <div class="drawer-divider"></div>
-                    <a href="https://iaypaa.org" target="_blank" class="drawer-item">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
-                        <span>Visit iaypaa.org</span>
-                    </a>
-                </div>
-                <div class="drawer-footer">
-                    <p>IAYPAA X - From Muck to Miracle</p>
-                    <p class="version">Version 1.0.0</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Event Detail Modal -->
-        <div id="event-modal" class="modal hidden">
-            <div class="modal-content event-modal-content">
-                <button class="modal-close">&times;</button>
-                <div id="event-detail" class="event-detail">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Toast Notifications -->
-        <div id="toast-container" class="toast-container"></div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="app.js"></script>
     <script>
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.log('Service Worker registration failed:', err));
-            });
-        }
+        // Trigger animation sequence after page + fonts load
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
     </script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

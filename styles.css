@@ -25,7 +25,7 @@
     /* Neutrals */
     --text-primary: #f5f5f0;
     --text-secondary: #a8b5a8;
-    --text-muted: #6b7a6b;
+    --text-muted: #8a9a8a;
     
     /* Functional */
     --success: #4caf50;
@@ -62,6 +62,23 @@
     --z-modal: 200;
     --z-toast: 300;
     --z-splash: 400;
+}
+
+/* Skip Link */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--gold-primary);
+    color: var(--ooze-deep);
+    font-weight: 600;
+    z-index: 9999;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 0;
 }
 
 /* Reset & Base */
@@ -292,6 +309,64 @@ body {
 
 .detail-item svg {
     color: var(--gold-primary);
+}
+
+/* Countdown */
+.countdown-section {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+}
+
+.countdown-label {
+    font-family: 'Creepster', cursive;
+    font-size: 1.25rem;
+    color: var(--gold-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.countdown-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.countdown-box {
+    background: linear-gradient(135deg, var(--ooze-medium) 0%, var(--ooze-dark) 100%);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-sm);
+}
+
+.countdown-number {
+    font-family: 'Creepster', cursive;
+    font-size: 2rem;
+    color: var(--gold-primary);
+    line-height: 1;
+}
+
+.countdown-unit {
+    font-size: 0.625rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: var(--spacing-xs);
+}
+
+.countdown-live {
+    font-family: 'Creepster', cursive;
+    font-size: 1.5rem;
+    color: var(--gold-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.countdown-day-indicator {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.countdown-past {
+    color: var(--text-secondary);
+    font-size: 1rem;
 }
 
 /* Quick Links */
@@ -696,6 +771,18 @@ body {
     background: var(--ooze-medium);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);
+    border: 1px solid rgba(201, 162, 39, 0.15);
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    transition: all var(--transition-fast);
+}
+
+.room-card:hover,
+.room-card:focus {
+    border-color: var(--gold-primary);
+    box-shadow: var(--shadow-gold);
 }
 
 .room-color {
@@ -788,6 +875,25 @@ body {
     font-size: 0.875rem;
     color: var(--text-secondary);
     line-height: 1.6;
+}
+
+.speaker-homegroup {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+}
+
+.speaker-time {
+    font-size: 0.75rem;
+    color: var(--gold-light);
+    margin-top: var(--spacing-sm);
+}
+
+.speaker-img {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
 }
 
 /* Buttons */
@@ -1091,6 +1197,73 @@ body {
 
 .event-detail-actions button {
     flex: 1;
+}
+
+/* Event Notes */
+.event-notes {
+    margin-bottom: var(--spacing-lg);
+}
+
+.event-notes label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.event-notes textarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--ooze-medium);
+    border: 1px solid rgba(201, 162, 39, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    resize: vertical;
+    min-height: 48px;
+}
+
+.event-notes textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.event-notes textarea:focus {
+    outline: none;
+    border-color: var(--gold-primary);
+}
+
+/* Reminder Toggle */
+.reminder-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.reminder-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--gold-primary);
+    cursor: pointer;
+}
+
+/* Note Indicator */
+.note-indicator {
+    color: var(--gold-light);
+    font-size: 0.8rem;
+    margin-left: 4px;
+}
+
+/* Export Button */
+.export-btn {
+    font-size: 0.8rem;
+    padding: var(--spacing-xs) var(--spacing-md);
 }
 
 /* Search Modal */

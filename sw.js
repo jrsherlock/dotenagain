@@ -3,14 +3,17 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_NAME = 'iaypaa-x-v1';
+// Increment CACHE_VERSION when deploying content changes
+const CACHE_VERSION = '2';
+const CACHE_NAME = `iaypaa-x-v${CACHE_VERSION}`;
 const ASSETS_TO_CACHE = [
     '/',
-    '/index.html',
+    '/app.html',
     '/styles.css',
     '/app.js',
     '/manifest.json',
-    '/images/logo.jpg',
+    '/images/ooze2-mobile.webp',
+    '/images/ooze2-mobile.png',
     '/icons/icon-192.png',
     '/icons/icon-512.png'
 ];
@@ -102,7 +105,7 @@ self.addEventListener('fetch', (event) => {
                     .catch(() => {
                         // Return offline page for navigation requests
                         if (event.request.mode === 'navigate') {
-                            return caches.match('/index.html');
+                            return caches.match('/app.html');
                         }
                     });
             })
@@ -126,7 +129,7 @@ self.addEventListener('push', (event) => {
     const options = {
         body: event.data ? event.data.text() : 'New update from IAYPAA X!',
         icon: '/icons/icon-192.png',
-        badge: '/icons/badge-72.png',
+        badge: '/icons/icon-72.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),

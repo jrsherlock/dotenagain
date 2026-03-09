@@ -81,11 +81,11 @@ const scheduleData = {
             id: 'fri-8',
             time: '9:30 PM',
             endTime: '11:00 PM',
-            title: 'Dance - Costume Party',
+            title: 'Dance - Primordial Ooze Party',
             venue: 'grand-ballroom',
             venueLabel: 'Grand Ballroom',
             type: 'social',
-            description: 'Get creative with your costume! Dance the night away in recovery.',
+            description: 'Get your glow on at the ooze-themed dance! Neon, glow sticks, and good vibes in recovery.',
             featured: true
         },
         {
@@ -234,11 +234,11 @@ const scheduleData = {
             id: 'sat-13',
             time: '3:30 PM',
             endTime: '5:30 PM',
-            title: 'Psychic',
+            title: 'Sober Fortune Teller',
             venue: 'grand-ballroom',
             venueLabel: 'Grand Ballroom',
             type: 'social',
-            description: 'Fun and mysterious entertainment - what does your sober future hold?'
+            description: 'Fun entertainment — what does your sober future hold? Come get a lighthearted reading!'
         },
         {
             id: 'sat-14',
@@ -286,11 +286,11 @@ const scheduleData = {
             id: 'sat-18',
             time: '10:00 PM',
             endTime: '12:00 AM',
-            title: 'Dance - Monster Mash',
+            title: 'Dance - From Muck to Miracle',
             venue: 'grand-ballroom',
             venueLabel: 'Grand Ballroom',
             type: 'social',
-            description: 'Get your groove on at the primordial ooze themed dance party!',
+            description: 'The main event dance — celebrate the miracle! Get your groove on at the primordial ooze themed dance party!',
             featured: true
         },
         {
@@ -358,6 +358,55 @@ const scheduleData = {
     ]
 };
 
+// Conference dates (update when confirmed — month is 0-indexed: 7 = August)
+// Using mid-August as placeholder until exact dates are set
+const CONFERENCE_START = new Date(2026, 7, 14, 15, 0, 0); // Friday 3 PM CT
+const CONFERENCE_END = new Date(2026, 7, 16, 12, 0, 0);   // Sunday noon CT
+
+// Speaker Data
+const speakersData = [
+    {
+        id: 'speaker-fri-night',
+        slot: 'Friday Night Speaker',
+        time: 'Friday 8:00 PM',
+        venue: 'Grand Ballroom',
+        name: null,
+        homegroup: null,
+        bio: null,
+        photoUrl: null
+    },
+    {
+        id: 'speaker-sat-noon',
+        slot: 'Saturday Noon Speaker',
+        time: 'Saturday 12:00 PM',
+        venue: 'Grand Ballroom',
+        name: null,
+        homegroup: null,
+        bio: null,
+        photoUrl: null
+    },
+    {
+        id: 'speaker-sat-night',
+        slot: 'Saturday Night Speaker',
+        time: 'Saturday 8:00 PM',
+        venue: 'Grand Ballroom',
+        name: null,
+        homegroup: null,
+        bio: null,
+        photoUrl: null
+    },
+    {
+        id: 'speaker-sun-spiritual',
+        slot: 'Sunday Spiritual Speaker',
+        time: 'Sunday 9:30 AM',
+        venue: 'Grand Ballroom',
+        name: null,
+        homegroup: null,
+        bio: null,
+        photoUrl: null
+    }
+];
+
 // App State
 const state = {
     currentView: 'home',
@@ -412,7 +461,11 @@ function init() {
     loadSavedSchedule();
     setupEventListeners();
     renderCurrentEvents();
-    
+    renderCountdown();
+    renderSpeakers();
+    scheduleActiveReminders();
+    setInterval(renderCountdown, 1000);
+
     // Hide splash screen after animation
     setTimeout(() => {
         elements.splashScreen.classList.add('hidden');
@@ -501,6 +554,7 @@ function handleDayChange(tab) {
     
     container.querySelectorAll('.day-tab').forEach(t => {
         t.classList.toggle('active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
     });
     
     state.currentDay = day;
@@ -596,14 +650,15 @@ function parseTime(timeStr) {
 function createEventCard(event, showAddIndicator = false, isDraggable = false) {
     const isAdded = isEventInSchedule(event.id);
     const draggableAttr = isDraggable ? 'draggable="true"' : '';
-    
+    const noteIndicator = hasNote(event.id) ? '<span class="note-indicator" title="Has notes">&#9998;</span>' : '';
+
     return `
-        <div class="event-card ${isAdded && showAddIndicator ? 'added' : ''}" 
-             data-id="${event.id}" 
+        <div class="event-card ${isAdded && showAddIndicator ? 'added' : ''}"
+             data-id="${event.id}"
              data-venue="${event.venue}"
              ${draggableAttr}>
             <div class="event-time">${event.time}${event.endTime ? ' - ' + event.endTime : ''}</div>
-            <div class="event-title">${event.title}</div>
+            <div class="event-title">${event.title} ${noteIndicator}</div>
             <div class="event-meta">
                 <span class="event-venue">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -614,7 +669,7 @@ function createEventCard(event, showAddIndicator = false, isDraggable = false) {
                 </span>
                 <span class="event-type">${event.type}</span>
             </div>
-            ${isDraggable ? '<div class="delete-indicator">🗑️</div>' : ''}
+            ${isDraggable ? '<div class="delete-indicator">&#128465;</div>' : ''}
         </div>
     `;
 }
@@ -643,6 +698,9 @@ function openEventModal(eventId) {
     
     const isAdded = isEventInSchedule(eventId);
     
+    const savedNote = getSavedNote(eventId);
+    const day = getDayForEvent(eventId) || '';
+
     elements.eventDetail.innerHTML = `
         <div class="event-detail-time">${event.time}${event.endTime ? ' - ' + event.endTime : ''}</div>
         <h2 class="event-detail-title">${event.title}</h2>
@@ -660,28 +718,104 @@ function openEventModal(eventId) {
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                 </svg>
-                <span>${capitalizeFirst(getDayForEvent(eventId) || '')}</span>
+                <span>${capitalizeFirst(day)}</span>
             </div>
         </div>
         <p class="event-detail-description">${event.description}</p>
+        <div class="event-notes">
+            <label for="event-notes-input">My Notes</label>
+            <textarea id="event-notes-input" placeholder="Add a personal note..." rows="2">${savedNote}</textarea>
+        </div>
+        <label class="reminder-toggle">
+            <input type="checkbox" id="reminder-toggle" ${isReminderSet(eventId) ? 'checked' : ''}>
+            <span>Remind me 10 min before</span>
+        </label>
         <div class="event-detail-actions">
             <button class="btn-primary" id="toggle-schedule-btn">
-                ${isAdded ? '✓ In My Schedule' : '+ Add to Schedule'}
+                ${isAdded ? '&#10003; In My Schedule' : '+ Add to Schedule'}
             </button>
+            <button class="btn-outline" id="share-event-btn">Share</button>
         </div>
     `;
-    
+
     document.getElementById('toggle-schedule-btn').addEventListener('click', () => {
         toggleEventInSchedule(eventId);
         closeEventModal();
     });
+
+    document.getElementById('share-event-btn').addEventListener('click', () => {
+        const text = `${event.title}\n${capitalizeFirst(day)} ${event.time}\n${event.venueLabel}\n\nIAYPAA X - From Muck to Miracle\n${window.location.href}`;
+        if (navigator.share) {
+            navigator.share({ title: event.title, text: text }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(text);
+            showToast('Event details copied!', 'success');
+        }
+    });
+
+    document.getElementById('event-notes-input').addEventListener('blur', (e) => {
+        saveNote(eventId, e.target.value);
+    });
+
+    document.getElementById('reminder-toggle').addEventListener('change', async () => {
+        const granted = await requestNotificationPermission();
+        if (granted) {
+            toggleReminder(eventId);
+        } else {
+            document.getElementById('reminder-toggle').checked = false;
+            showToast('Notifications blocked by browser');
+        }
+    });
     
     elements.eventModal.classList.remove('hidden');
+
+    // Focus management
+    const closeBtn = elements.eventModal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+    trapFocus(elements.eventModal);
+}
+
+let lastFocusedElement = null;
+
+// Focus trap for modals
+function trapFocus(element) {
+    lastFocusedElement = document.activeElement;
+
+    element._trapHandler = (e) => {
+        if (e.key === 'Escape') {
+            closeEventModal();
+            return;
+        }
+        if (e.key !== 'Tab') return;
+
+        const focusable = element.querySelectorAll('button, input, select, a[href], textarea');
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
+
+    element.addEventListener('keydown', element._trapHandler);
 }
 
 // Close Event Modal
 function closeEventModal() {
     elements.eventModal.classList.add('hidden');
+    if (elements.eventModal._trapHandler) {
+        elements.eventModal.removeEventListener('keydown', elements.eventModal._trapHandler);
+    }
+    if (lastFocusedElement) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
 }
 
 // Toggle Event in Schedule
@@ -861,6 +995,265 @@ function renderCurrentEvents() {
     elements.currentEvents.querySelectorAll('.event-card').forEach(card => {
         card.addEventListener('click', () => openEventModal(card.dataset.id));
     });
+}
+
+// Countdown Timer
+function renderCountdown() {
+    const container = document.getElementById('countdown');
+    if (!container) return;
+
+    const now = new Date();
+    const diff = CONFERENCE_START - now;
+
+    if (diff > 0) {
+        // Before conference
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        container.innerHTML = `
+            <div class="countdown-label">Conference starts in</div>
+            <div class="countdown-boxes">
+                <div class="countdown-box">
+                    <div class="countdown-number">${days}</div>
+                    <div class="countdown-unit">Days</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number">${hours}</div>
+                    <div class="countdown-unit">Hours</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number">${minutes}</div>
+                    <div class="countdown-unit">Min</div>
+                </div>
+                <div class="countdown-box">
+                    <div class="countdown-number">${seconds}</div>
+                    <div class="countdown-unit">Sec</div>
+                </div>
+            </div>
+        `;
+    } else if (now <= CONFERENCE_END) {
+        // During conference
+        const elapsed = now - CONFERENCE_START;
+        const dayNum = Math.min(3, Math.floor(elapsed / (1000 * 60 * 60 * 24)) + 1);
+
+        container.innerHTML = `
+            <div class="countdown-live">We're Live!</div>
+            <div class="countdown-day-indicator">Day ${dayNum} of 3</div>
+        `;
+    } else {
+        // After conference
+        container.innerHTML = `
+            <div class="countdown-past">Thanks for coming! See you next year!</div>
+        `;
+    }
+}
+
+// Render Speakers
+function renderSpeakers() {
+    const grid = document.querySelector('.speakers-grid');
+    if (!grid) return;
+
+    grid.innerHTML = speakersData.map(speaker => {
+        const hasPhoto = speaker.photoUrl;
+        const hasName = speaker.name;
+
+        return `
+            <div class="speaker-card">
+                <div class="${hasPhoto ? 'speaker-photo' : 'speaker-photo-placeholder'}">
+                    ${hasPhoto
+                        ? `<img src="${speaker.photoUrl}" alt="${speaker.name}" class="speaker-img">`
+                        : `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                           </svg>`
+                    }
+                </div>
+                <div class="speaker-info">
+                    <h3 class="speaker-name">${hasName ? speaker.name : speaker.slot}</h3>
+                    ${speaker.homegroup ? `<p class="speaker-homegroup">${speaker.homegroup}</p>` : ''}
+                    <p class="speaker-bio">${speaker.bio || 'Speaker to be announced. Check back closer to the conference for details!'}</p>
+                    <p class="speaker-time">${speaker.time} &mdash; ${speaker.venue}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Personal Notes
+function getSavedNote(eventId) {
+    const notes = JSON.parse(localStorage.getItem('iaypaa-x-notes') || '{}');
+    return notes[eventId] || '';
+}
+
+function saveNote(eventId, text) {
+    const notes = JSON.parse(localStorage.getItem('iaypaa-x-notes') || '{}');
+    if (text.trim()) {
+        notes[eventId] = text.trim();
+    } else {
+        delete notes[eventId];
+    }
+    localStorage.setItem('iaypaa-x-notes', JSON.stringify(notes));
+}
+
+function hasNote(eventId) {
+    const notes = JSON.parse(localStorage.getItem('iaypaa-x-notes') || '{}');
+    return !!notes[eventId];
+}
+
+// Calendar Export (.ics)
+function exportScheduleToICS() {
+    const allEvents = [...scheduleData.friday, ...scheduleData.saturday, ...scheduleData.sunday];
+    const myEventIds = [
+        ...state.mySchedule.friday,
+        ...state.mySchedule.saturday,
+        ...state.mySchedule.sunday
+    ];
+
+    if (myEventIds.length === 0) {
+        showToast('Add events to your schedule first');
+        return;
+    }
+
+    const myEvents = myEventIds.map(id => allEvents.find(e => e.id === id)).filter(Boolean);
+
+    const dayOffsets = { friday: 0, saturday: 1, sunday: 2 };
+
+    let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//IAYPAA X//EN\r\nCALSCALE:GREGORIAN\r\n';
+
+    myEvents.forEach(event => {
+        const day = getDayForEvent(event.id);
+        const offset = dayOffsets[day] || 0;
+        const eventDate = new Date(CONFERENCE_START);
+        eventDate.setDate(eventDate.getDate() + offset);
+
+        const startTime = parseTimeToDate(event.time, eventDate);
+        const endTime = event.endTime ? parseTimeToDate(event.endTime, eventDate) : new Date(startTime.getTime() + 60 * 60 * 1000);
+
+        // Handle events that cross midnight
+        if (endTime <= startTime) {
+            endTime.setDate(endTime.getDate() + 1);
+        }
+
+        ics += 'BEGIN:VEVENT\r\n';
+        ics += `DTSTART:${formatICSDate(startTime)}\r\n`;
+        ics += `DTEND:${formatICSDate(endTime)}\r\n`;
+        ics += `SUMMARY:${event.title}\r\n`;
+        ics += `LOCATION:${event.venueLabel} - Iowa Memorial Union\r\n`;
+        ics += `DESCRIPTION:${event.description.replace(/\n/g, '\\n')}\r\n`;
+        ics += `UID:${event.id}@iaypaa-x\r\n`;
+        ics += 'END:VEVENT\r\n';
+    });
+
+    ics += 'END:VCALENDAR';
+
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'iaypaa-x-schedule.ics';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Schedule exported!', 'success');
+}
+
+function parseTimeToDate(timeStr, baseDate) {
+    const [time, period] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':').map(Number);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+
+    const d = new Date(baseDate);
+    d.setHours(hours, minutes, 0, 0);
+    return d;
+}
+
+function formatICSDate(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`;
+}
+
+// Schedule Reminders
+function loadReminders() {
+    const saved = localStorage.getItem('iaypaa-x-reminders');
+    return saved ? JSON.parse(saved) : {};
+}
+
+function saveReminders(reminders) {
+    localStorage.setItem('iaypaa-x-reminders', JSON.stringify(reminders));
+}
+
+function isReminderSet(eventId) {
+    return !!loadReminders()[eventId];
+}
+
+function toggleReminder(eventId) {
+    const reminders = loadReminders();
+    if (reminders[eventId]) {
+        delete reminders[eventId];
+        showToast('Reminder removed');
+    } else {
+        reminders[eventId] = true;
+        showToast('Reminder set for 10 min before', 'success');
+    }
+    saveReminders(reminders);
+    scheduleActiveReminders();
+}
+
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) return false;
+    if (Notification.permission === 'granted') return true;
+    if (Notification.permission === 'denied') return false;
+
+    const permission = await Notification.requestPermission();
+    return permission === 'granted';
+}
+
+let activeTimers = [];
+
+function scheduleActiveReminders() {
+    // Clear existing timers
+    activeTimers.forEach(t => clearTimeout(t));
+    activeTimers = [];
+
+    const reminders = loadReminders();
+    const now = new Date();
+    const allEvents = [...scheduleData.friday, ...scheduleData.saturday, ...scheduleData.sunday];
+    const dayOffsets = { friday: 0, saturday: 1, sunday: 2 };
+
+    Object.keys(reminders).forEach(eventId => {
+        const event = allEvents.find(e => e.id === eventId);
+        if (!event) return;
+
+        const day = getDayForEvent(eventId);
+        const offset = dayOffsets[day] || 0;
+        const eventDate = new Date(CONFERENCE_START);
+        eventDate.setDate(eventDate.getDate() + offset);
+        const eventTime = parseTimeToDate(event.time, eventDate);
+        const reminderTime = new Date(eventTime.getTime() - 10 * 60 * 1000);
+        const delay = reminderTime - now;
+
+        if (delay > 0 && delay < 3 * 24 * 60 * 60 * 1000) {
+            const timer = setTimeout(() => {
+                if (Notification.permission === 'granted') {
+                    new Notification(`${event.title} starts in 10 minutes`, {
+                        body: `${event.venueLabel} \u2014 ${event.time}`,
+                        icon: '/icons/icon-192.png'
+                    });
+                }
+            }, delay);
+            activeTimers.push(timer);
+        }
+    });
+}
+
+// Navigate to Events filtered by venue (for venue map)
+function navigateToVenueEvents(venue) {
+    state.venueFilter = venue;
+    elements.venueFilter.value = venue;
+    handleNavigation('events');
+    renderEvents();
 }
 
 // Search Functions
